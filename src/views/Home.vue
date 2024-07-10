@@ -21,6 +21,8 @@
         </div>
     </div>
     <div v-if="showArticle">
+        <!-- {{ articleAnswer }} -->
+        <Article></Article>
     </div>
 
 </template>
@@ -28,6 +30,7 @@
 <script>
 import ArticleInputBox from '../components/ArticleInputBox.vue'
 import FileUpload from '../components/FileUpload.vue'
+import Article from '../components/Article.vue'
 import { useArticleStore } from '../stores/article.js';
 import { toRefs } from 'vue';
 
@@ -43,26 +46,54 @@ export default {
     },
     components: {
         ArticleInputBox,
-        FileUpload
+        FileUpload,
+        Article,
     },
     data() {
         return {
         }
     },
     mounted() {
-        fetch('../assets/prompt.txt')
-            .then(promptResponse => {
-                if (!promptResponse.ok) {
-                    throw new Error(`Error loading prompt: ${promptResponse.statusText}`);
-                }
-                return promptResponse.text();
-            })
-            .then(content => {
-                this.prompt = content;
-            })
-            .catch(error => {
-                console.error('Failed to load the prompt:', error);
-            });
+        // fetch('../assets/prompt.txt')
+        //     .then(promptResponse => {
+        //         if (!promptResponse.ok) {
+        //             throw new Error(`Error loading prompt: ${promptResponse.statusText}`);
+        //         }
+        //         return promptResponse.text();
+        //     })
+        //     .then(textContent => {
+        //         this.prompt = textContent;
+        //         console.log("Loaded prompt: ", this.prompt);
+        //     })
+        //     .catch(error => {
+        //         console.error('Failed to load the prompt:', error);
+        //     });
+        this.prompt = `\
+You are expert of teaching English learner whom first language is Chinese. Your task is to translate the difficult English Vocabulary into Traditional Chinese 繁體中文 and output the translation directly in the paragraph. The translation format is [difficult_vocab](繁體中文翻譯).
+
+[Input]
+The problem has forced police [jurisdictions](司法權) across the country to issue public [bulletins](新聞快報) on how to protect vehicles from theft.
+=====
+
+[Output] 
+{
+The problem has forced police [jurisdictions](司法權) across the country to issue public [bulletins](新聞快報) on how to protect vehicles from theft.
+}
+
+[Input]
+Australia has appointed a special envoy to combat antisemitism and preserve "social cohesion", amid rising community tension over the Israel-Gaza war.
+Prime Minister Anthony Albanese announced lawyer and businesswoman Jillian Segal would consult with community leaders and discrimination experts to advise the government.
+It follows in the footsteps of countries like the US, Canada, Greece and the UK, which have all had similar positions for years.
+A special envoy for addressing Islamophobia will also be appointed soon, Mr Albanese added.
+
+[Output]
+{
+Australia has appointed a special [envoy](特使) to combat [antisemitism](反猶太主義) and preserve "[social cohesion](社會凝聚力)" , amid rising community tension over the Israel-Gaza war.
+Prime Minister Anthony Albanese announced lawyer and businesswoman Jillian Segal would consult with community leaders and [discrimination](歧視) experts to advise the government.
+It follows in the footsteps of countries like the US, Canada, Greece and the UK, which have all had similar [positions](職位) for years.
+A special [envoy](特使) for addressing [Islamophobia](伊斯蘭恐懼症) will also be appointed soon, Mr Albanese added.
+}\
+        `
     }
 }
 </script>
