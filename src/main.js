@@ -1,5 +1,6 @@
 import 'element-plus/dist/index.css'
-import './assets/main.css'
+import './assets/tailwind.css'; // Import the Tailwind CSS file
+// import './assets/main.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
