@@ -36,8 +36,8 @@
       <div>
         <p class="mt-4">Built with GroqCloud, Vercel</p>
         <p>
-          <a href="https://github.com/Tracy" target="_blank" class="text-blue-500 hover:underline">Tracy</a> |
-          <a href="https://github.com/project-repo" target="_blank" class="text-blue-500 hover:underline">GitHub</a>
+          <a href="https://github.com/tracywong117" target="_blank" class="text-blue-500 hover:underline">Tracy</a> |
+          <a href="https://github.com/tracywong117/Dictarticle.git" target="_blank" class="text-blue-500 hover:underline">GitHub</a>
         </p>
       </div>
     </div>
