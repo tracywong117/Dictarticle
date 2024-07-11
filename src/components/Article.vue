@@ -1,17 +1,19 @@
 <template>
   <div v-if="articleAnswer" class="px-40 m-2 font-serif">
-    <div class="text-xl font-poppins text-zinc-900">
+    <div class="text-xl font-poppins text-zinc-900 leading-loose">
       <span v-for="(part, index) in parsedArticleAnswer" :key="index">
         <span v-if="part.type === 'text'">{{ part.content }}</span>
-        <my-tooltip v-else>
+        <!-- <my-tooltip v-else :vocab="part.title"> -->
+        <my-tooltip v-else :vocab="part.title">
           <template #reference>
-            <span class=" border-b border-dashed border-violet-600 "style="cursor: help;">
+            <!-- <span class=" border-b border-dashed border-violet-600 "style="cursor: help;">
               {{ part.title }}
-            </span>
+            </span> -->
+            <a class="underline decoration-pink-500/50 hover:decoration-pink-500">
+              {{ part.title }}
+            </a>
           </template>
-          <!-- <template> -->
-            {{ part.content }}
-          <!-- </template> -->
+          {{ part.title }}: {{ part.content }}
         </my-tooltip>
       </span>
     </div>
@@ -29,9 +31,10 @@ export default {
   setup() {
     const articleStore = useArticleStore();
     const articleState = toRefs(articleStore);
-
+    
     return {
       ...articleState,
+
     };
   },
   components: {
@@ -77,7 +80,3 @@ export default {
   },
 };
 </script>
-
-<style>
-/* Add any additional styling here */
-</style>

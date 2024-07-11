@@ -21,27 +21,14 @@ export const useArticleStore = defineStore('articleStore', {
             return matches;
         },
         callGroq(question) {
-            console.log('prompt', this.prompt);
-            console.log('callGroq', question);
-            const apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
-            const apiKey = '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';
+            const apiUrl = 'https://dictarticle-nextjs.vercel.app/api/chat';
 
             axios.post(apiUrl, {
-                model: 'llama3-70b-8192',
-                messages: [
-                    {
-                        role: 'system',
-                        content: this.prompt
-                    },
-                    {
-                        role: 'user',
-                        content: question
-                    }
-                ]
+                prompt: this.prompt,
+                question: question
             }, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
                 }
             })
                 .then(response => {

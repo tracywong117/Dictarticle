@@ -1,10 +1,14 @@
 <template>
     <div class="input-container flex flex-col">
-        <textarea v-model="content" class="styled-input h-[450px]" placeholder="Type your text here..."
-            onfocus="this.parentElement.style.borderColor='#007BFF';"
+        <textarea v-model="content" class="styled-input h-96" placeholder="Type your text here..."
+            onfocus="this.parentElement.style.borderColor='rgb(216, 180, 254)';"
             onblur="this.parentElement.style.borderColor='#ccc';"></textarea>
         <div class="flex justify-center">
-            <button class="text-center border px-5 py-1 rounded-lg hover:border-purple-600" @click="setShowArticle">Get Result!</button>
+            <button class="flex items-center text-center border px-5 py-1 rounded-lg hover:border-purple-600"
+                @click="setShowArticle">
+                <img src="../assets/icons/magic-star.svg" alt="Magic Star Icon" class="w-5 h-5 mr-2">
+                Get Result!
+            </button>
         </div>
     </div>
 </template>
@@ -43,8 +47,7 @@ export default {
         },
     },
     methods: {
-        setShowArticle(){
-            console.log('show article');
+        setShowArticle() {
             this.showArticle = true;
             this.articleAnswer = this.callGroq(this.content)
         }
