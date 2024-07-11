@@ -4,11 +4,7 @@
             onfocus="this.parentElement.style.borderColor='rgb(216, 180, 254)';"
             onblur="this.parentElement.style.borderColor='#ccc';"></textarea>
         <div class="flex justify-center">
-            <button class="flex items-center text-center border px-5 py-1 rounded-lg hover:border-purple-600"
-                @click="setShowArticle">
-                <img src="../assets/icons/magic-star.svg" alt="Magic Star Icon" class="w-5 h-5 mr-2">
-                Get Result!
-            </button>
+            <RoundButton @click="setShowArticle"></RoundButton>
         </div>
     </div>
 </template>
@@ -17,6 +13,7 @@
 <script>
 import { useArticleStore } from '../stores/article.js';
 import { toRefs } from 'vue';
+import RoundButton from './RoundButton.vue';
 
 export default {
     name: 'ArticleInputBox',
@@ -28,6 +25,9 @@ export default {
             ...articleState,
             callGroq: articleStore.callGroq
         };
+    },
+    components: {
+        RoundButton
     },
     data() {
         return {

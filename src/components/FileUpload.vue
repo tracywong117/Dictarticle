@@ -9,18 +9,19 @@
             </div>
         </div>
         <div class="flex justify-center mt-3">
-            <button class="flex items-center text-center border px-5 py-1 rounded-lg hover:border-purple-600"
-                @click="setShowArticle">
-                <img src="../assets/icons/magic-star.svg" alt="Magic Star Icon" class="w-5 h-5 mr-2">
-                Get Result!
-            </button>
+            <RoundButton @click=""></RoundButton>
         </div>
     </div>
 </template>
 
 <script>
+import RoundButton from './RoundButton.vue';
+
 export default {
     name: 'FileUpload',
+    components: {
+        RoundButton
+    },
     methods: {
         displayFileName(event) {
             const fileName = event.target.files[0].name;

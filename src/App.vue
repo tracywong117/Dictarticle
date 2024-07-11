@@ -1,33 +1,32 @@
 <template>
   <div class="flex flex-col min-h-screen overflow-y-auto">
-    <div class="flex-1 my-5">
-      <div class="flex justify-between font-poppins items-center w-full pb-2 border-b">
-        <div>
-          <!-- Empty  -->
+    <div class="flex-1 my-6">
+      <div class="flex justify-between items-center font-poppins w-full pb-2 border-b relative">
+        <div class="ml-4 md:hidden absolute left-0">
+          <menu-button @click="handleClick"></menu-button> <!-- hidden in the desktop-->
         </div>
-        <div class="font-bold text-4xl">
+        <div class="font-bold text-4xl mx-auto">
           DictArticle
           <div class="flex justify-center ml-[4.2rem] mt-[-10px]" style="height: 20px;">
             <svg viewBox="0 0 200 20" preserveAspectRatio="none" width="120" height="20">
-              <!-- Define the gradient -->
               <defs>
                 <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" style="stop-color:#ff007f;stop-opacity:1" />
                   <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
                 </linearGradient>
               </defs>
-              <!-- Wavy path -->
               <path
                 d="M0 10 Q 10 0, 20 10 Q 30 20, 40 10 Q 50 0, 60 10 Q 70 20, 80 10 Q 90 0, 100 10 Q 110 20, 120 10 Q 130 0, 140 10 Q 150 20, 160 10 Q 170 0, 180 10 Q 190 20, 200 10"
                 style="fill: none; stroke: url(#gradient); stroke-width: 2;" />
             </svg>
           </div>
         </div>
-        <div class="flex flex-row space-x-3 mx-3">
+        <div class="flex flex-row space-x-3 mx-3 absolute right-0">
           <setting-button @click="handleClick"></setting-button>
-          <menu-button class="mr-4" @click="handleClick"></menu-button>
+          <menu-button class="mr-4 hidden md:flex" @click="handleClick"></menu-button>
         </div>
       </div>
+
       <Home></Home>
     </div>
 
@@ -37,11 +36,12 @@
         <p class="mt-4">Built with GroqCloud, Vercel</p>
         <p>
           <a href="https://github.com/tracywong117" target="_blank" class="text-blue-500 hover:underline">Tracy</a> |
-          <a href="https://github.com/tracywong117/Dictarticle.git" target="_blank" class="text-blue-500 hover:underline">GitHub</a>
+          <a href="https://github.com/tracywong117/Dictarticle.git" target="_blank"
+            class="text-blue-500 hover:underline">GitHub</a>
         </p>
       </div>
     </div>
-    
+
   </div>
 </template>
 

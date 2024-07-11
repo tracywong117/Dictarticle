@@ -1,5 +1,5 @@
 <template>
-  <div v-if="articleAnswer" class="px-40 m-2 font-serif">
+  <div v-if="articleAnswer" class="px-4 md:px-40 m-2 pt-8 font-serif">
     <div class="text-xl font-poppins text-zinc-900 leading-loose">
       <span v-for="(part, index) in parsedArticleAnswer" :key="index">
         <span v-if="part.type === 'text'">{{ part.content }}</span>
