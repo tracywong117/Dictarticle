@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 export const useArticleStore = defineStore('articleStore', {
     state: () => ({
@@ -39,8 +40,12 @@ export const useArticleStore = defineStore('articleStore', {
                 })
                 .then(data => {
                     const result = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-                    this.articleAnswer = this.getContentInsideBraces(result)[0] || 'No result found';
-                    console.log('articleAnswer', this.articleAnswer);
+                    this.articleAnswer = {
+                        text: this.getContentInsideBraces(result)[0] || 'No result found',
+                        createdAt: new Date().toISOString(),
+                        uuid: uuidv4(),
+                    }
+                    console.log('articleAnswer', this.articleAnswer.text);
 
                 })
                 .catch(error => {

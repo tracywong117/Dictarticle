@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!showArticle" class="flex flex-col sm:flex-row justify-center mt-10 items-center">
+  <div class="flex flex-col sm:flex-row justify-center mt-10 items-center">
     <div class="w-full sm:w-1/2">
       <div class="text-center">
         <span class="text-3xl font-bold mb-5">
@@ -20,54 +20,35 @@
       </div>
     </div>
   </div>
-    <div v-if="showArticle">
-        <Article></Article>
-    </div>
 
 </template>
 
 <script>
 import ArticleInputBox from '../components/ArticleInputBox.vue'
 import FileUpload from '../components/FileUpload.vue'
-import Article from '../components/Article.vue'
 import { useArticleStore } from '../stores/article.js'
 import { toRefs } from 'vue'
 
 export default {
-    setup() {
-        const articleStore = useArticleStore();
-        const articleState = toRefs(articleStore);
+  setup() {
+    const articleStore = useArticleStore();
+    const articleState = toRefs(articleStore);
 
-        return {
-            ...articleState,
+    return {
+      ...articleState,
 
-        };
-    },
-    components: {
-        ArticleInputBox,
-        FileUpload,
-        Article,
-    },
-    data() {
-        return {
-        }
-    },
-    mounted() {
-        // fetch('../assets/prompt.txt')
-        //     .then(promptResponse => {
-        //         if (!promptResponse.ok) {
-        //             throw new Error(`Error loading prompt: ${promptResponse.statusText}`);
-        //         }
-        //         return promptResponse.text();
-        //     })
-        //     .then(textContent => {
-        //         this.prompt = textContent;
-        //         console.log("Loaded prompt: ", this.prompt);
-        //     })
-        //     .catch(error => {
-        //         console.error('Failed to load the prompt:', error);
-        //     });
-        this.prompt = `\
+    };
+  },
+  components: {
+    ArticleInputBox,
+    FileUpload,
+  },
+  data() {
+    return {
+    }
+  },
+  mounted() {
+    this.prompt = `\
 You are expert of teaching English learner whom first language is Chinese. Your task is to translate the difficult English Vocabulary into Traditional Chinese 繁體中文 and output the translation directly in the paragraph. The translation format is [difficult_vocab](繁體中文翻譯).
 
 [Input]
@@ -93,7 +74,7 @@ It follows in the footsteps of countries like the US, Canada, Greece and the UK,
 A special [envoy](特使) for addressing [Islamophobia](伊斯蘭恐懼症) will also be appointed soon, Mr Albanese added.
 }\
         `
-    }
+  }
 }
 </script>
 

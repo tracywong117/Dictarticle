@@ -48,8 +48,9 @@ export default {
     },
     methods: {
         setShowArticle() {
-            this.showArticle = true;
-            this.articleAnswer = this.callGroq(this.content)
+            //  route to the article page
+            this.$router.push({ name: 'Article' }); 
+            this.articleAnswer = this.callGroq(this.content);
         }
     },
 

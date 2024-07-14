@@ -27,10 +27,10 @@
         </div>
       </div>
 
-      <Home></Home>
+      <router-view />
     </div>
 
-    <div class="mt-12 p-5 relative  text-center">
+    <div class="mt-12 py-5 relative w-full text-center">
       <div class="dashed-line"></div>
       <div>
         <p class="mt-4">Built with GroqCloud, Vercel</p>
