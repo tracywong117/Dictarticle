@@ -1,6 +1,6 @@
 <template>
   <!-- Overlay -->
-  <div v-if="isMenuOpen" class="fixed inset-0 bg-slate-800 opacity-20 z-40" @click="toggleMenu"></div>
+  <!-- <div v-if="isMenuOpen" class="fixed inset-0 bg-slate-800 opacity-20 z-40" @click="toggleMenu"></div> -->
 
   <button class="rounded-full w-12 h-12 flex items-center justify-center overflow-hidden border hover:border-purple-300"
     @click="toggleMenu">
