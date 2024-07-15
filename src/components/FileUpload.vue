@@ -2,7 +2,7 @@
     <div>
         <div class="upload-container" onclick="document.getElementById('file-upload').click();" tabindex="0">
             <div class="upload-content">
-                <img src="../assets/icons/cloud-upload.svg" alt="Cloud Upload Icon" class="upload-icon w-12 h-12">
+                <img src="/icons/cloud-upload.svg" alt="Cloud Upload Icon" class="upload-icon w-12 h-12">
                 <div class="text-[16px]">Browse file to upload</div>
                 <input type="file" id="file-upload" @change="displayFileName">
                 <div class="mt-[10px] text-[14px] text-neutral-500" id="file-name">No file chosen</div>

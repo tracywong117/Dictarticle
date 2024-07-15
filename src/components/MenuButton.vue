@@ -4,7 +4,7 @@
 
   <button class="rounded-full w-12 h-12 flex items-center justify-center overflow-hidden border hover:border-purple-300"
     @click="toggleMenu">
-    <img class="w-6 h-6" src="../assets/icons/menu-star.svg" alt="Star Icon">
+    <img class="w-6 h-6" src="/icons/menu-star.svg" alt="Star Icon">
   </button>
 
   <!-- Menu -->

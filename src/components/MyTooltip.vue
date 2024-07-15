@@ -25,9 +25,9 @@ export default {
     return {
       visible: false,
       searchSites: [
-        { name: 'Google', icon: '/src/assets/icons/google-icon.webp' },
-        { name: 'Wikipedia', icon: '/src/assets/icons/wikipedia-icon.png' },
-        { name: 'YouTube', icon: '/src/assets/icons/youtube-icon.png' },
+        { name: 'Google', icon: '/icons/google-icon.webp' },
+        { name: 'Wikipedia', icon: '/icons/wikipedia-icon.png' },
+        { name: 'YouTube', icon: '/icons/youtube-icon.png' },
       ],
       tooltipStyles: {
         position: 'absolute',

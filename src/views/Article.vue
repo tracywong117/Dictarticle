@@ -5,13 +5,13 @@
       <div>
         <div class="text-[14px] text-slate-700 px-2">
           <div class="flex items-center">
-            <img src="../assets/icons/calendar.svg" class="w-4 h-4 mr-2" alt="Calendar" />
+            <img src="/icons/calendar.svg" class="w-4 h-4 mr-2" alt="Calendar" />
             <!-- Created at:  -->
             {{ formatCreatedAt }}
           </div>
         </div>
         <div>
-          <property-tag />
+          <ArticleProperty></ArticleProperty>
         </div>
       </div>
       <span v-for="(part, index) in parsedArticleAnswer" :key="index">
@@ -27,7 +27,7 @@
             <div class="container-search-button">
               <button v-for="site in searchSites" :key="site.name" class="search-button"
                 @click="openSearchTab(site.name, part.title)">
-                <img :src="`${site.icon}`" :alt="`${site.name} icon`" />
+                <img :src="site.icon" :alt="`${site.name} icon`" />
               </button>
             </div>
           </div>
@@ -43,7 +43,7 @@ import { ElPopover } from 'element-plus';
 import MyTooltip from '../components/MyTooltip.vue';
 import { toRefs } from 'vue';
 import CustomInput from '../components/CustomInput.vue';
-import PropertyTag from '../components/PropertyTag.vue';
+import ArticleProperty from '../components/ArticleProperty.vue';
 
 export default {
   name: 'Article',
@@ -59,9 +59,9 @@ export default {
   data() {
     return {
       searchSites: [
-        { name: 'Google', icon: '/src/assets/icons/google-icon.webp' },
-        { name: 'Wikipedia', icon: '/src/assets/icons/wikipedia-icon.png' },
-        { name: 'Cambridge', icon: '/src/assets/icons/cambridge-icon.png' },
+        { name: 'Google', icon: '/icons/google-icon.webp' },
+        { name: 'Wikipedia', icon: '/icons/wikipedia-icon.png' },
+        { name: 'Cambridge', icon: '/icons/cambridge-icon.png' },
       ],
     }
   },
@@ -69,7 +69,7 @@ export default {
     ElPopover,
     MyTooltip,
     CustomInput,
-    PropertyTag,
+    ArticleProperty,
   },
   computed: {
     parsedArticleAnswer() {
