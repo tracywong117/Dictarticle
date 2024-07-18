@@ -80,7 +80,7 @@ export default {
 </script>
 
 <style>
-body::before {
+/* body::before {
   content: '';
   position: absolute;
   top: 0;
@@ -97,9 +97,9 @@ body::before {
   filter: blur(15px);
   opacity: 0.6;
   z-index: -1;
-}
+} */
 
-@keyframes inkMove {
+/* @keyframes inkMove {
   0% {
     background-position: 0% 50%;
   }
@@ -111,7 +111,7 @@ body::before {
   100% {
     background-position: 0% 50%;
   }
-}
+} */
 
 .dashed-line {
   width: 100%;

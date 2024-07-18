@@ -112,22 +112,39 @@
         p-4 m-0 hover:bg-gray-100 leading-normal text-[16px] placeholder-[#b1b1b1] bg-transparent cursor-pointer" />
             </div>
             <div class="w-1/2">
-                <div class="ml-2 flex flex-col bg-white" :class="[inputDropdownVisible ? 'border rounded' : '']">
+                <div class="ml-2 flex flex-col" :class="[inputDropdownVisible ? 'border rounded' : '']">
+                    <div v-for="(tag, index) in currentTags" :key="index" :class="['tag', tag.color]"
+                        class="inline-flex items-center px-1 m-1">
+                        {{ tag.text }}
+                        <span @click="removeCurrentTag(index)" class="ml-[5px] cursor-pointer">x</span>
+                    </div>
                     <input type="text" placeholder="Search for an option..." ref="another" @focus="toggleInputDropdown"
                         class="h-6 w-full outline-none resize-none 
                             px-2 py-4 m-0 focus:bg-transparent leading-normal text-[16px] placeholder-[#b1b1b1] "
                         :class="[inputDropdownVisible
                 ? 'border-b bg-gray-100 focus:bg-gray-100'
-                : 'border-none rounded-sm bg-transparent hover:bg-gray-100']" v-model="tempInputValue" />
-                    <div v-if="inputDropdownVisible" class="p-2 w-full text-[14px] text-gray-600 font-sans leading-[1.4]">
+                : 'border-none rounded-sm bg-transparent hover:bg-gray-100']" v-model="newTag" @keydown.enter="addTag"
+                        @keydown.backspace="checkDeleteLastTag" />
+                    <div v-if="inputDropdownVisible"
+                        class="p-2 w-full text-[14px] text-gray-600 font-sans leading-[1.4]">
                         <div class="py-1 px-2">
                             Select an option or create one
                         </div>
-                        <div v-if="tempInputValue" class="hover:bg-slate-100 px-2 py-1 leading-[1.3] flex">
-                            Create 
+                        <div v-if="newTag" class="hover:bg-slate-100 px-2 py-1 leading-[1.3] flex">
+                            Create
                             <div class="ml-1 px-2 rounded-sm bg-pink-100">
-                                {{ tempInputValue }}
+                                {{ newTag }}
                             </div>
+                        </div>
+                        <div v-else>
+                            <ul>
+                                <li v-for="(tag, index) in allTags" :key="index"
+                                    class="flex items-center p-2 mb-1 border rounded cursor-pointer" :class="tag.color"
+                                    @click="addStoredTag(tag)">
+                                    <span class="mr-2">::</span>
+                                    {{ tag.text }}
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -147,17 +164,17 @@
                             @focus="toggleInputDropdown"
                             class="h-6 flex-grow outline-none resize-none bg-transparent leading-normal text-[16px] placeholder-[#b1b1b1]"
                             :class="[inputDropdownVisible ? 'border-b bg-gray-100 focus:bg-gray-100' : 'border-none rounded-sm bg-transparent hover:bg-gray-100']"
-                            v-model="tempInputValue" @keydown.enter.prevent="addTag" />
+                            v-model="newTag" @keydown.enter.prevent="addTag" />
                     </div>
                     <div v-if="inputDropdownVisible"
                         class="p-2 w-full text-[14px] text-gray-600 font-sans leading-[1.4]">
                         <div class="py-1 px-2">
                             Select an option or create one
                         </div>
-                        <div v-if="tempInputValue" class="hover:bg-slate-100 px-2 py-1 leading-[1.3] flex">
+                        <div v-if="newTag" class="hover:bg-slate-100 px-2 py-1 leading-[1.3] flex">
                             Create
                             <div class="ml-1 px-2 rounded-sm bg-pink-100">
-                                {{ tempInputValue }}
+                                {{ newTag }}
                             </div>
                         </div>
                     </div>
@@ -256,8 +273,12 @@ export default {
             showEditOption: true,
             tempPropertyName: 'Text',
             inputDropdownVisible: false,
-            tempInputValue: '',
+            newTag: '',
             tags: [],
+            currentTags: [],
+            allTags: [],
+            newTag: '',
+            tagClasses: ['tag-green', 'tag-red', 'tag-blue', 'tag-brown', 'tag-grey'],
             property: {
                 'type': 'Text',
                 'name': 'Text',
@@ -318,9 +339,9 @@ export default {
             this.toggleEditOption();
         },
         addTag() {
-            if (this.tempInputValue && !this.tags.includes(this.tempInputValue)) {
-                this.tags.push(this.tempInputValue);
-                this.tempInputValue = '';
+            if (this.newTag && !this.tags.includes(this.newTag)) {
+                this.tags.push(this.newTag);
+                this.newTag = '';
             }
         },
         removeTag(index) {
@@ -329,6 +350,37 @@ export default {
         toggleInputDropdown() {
             this.inputDropdownVisible = !this.inputDropdownVisible;
         },
+        addTag() {
+            if (this.newTag.trim() !== '' && !this.currentTags.some(tag => tag.text === this.newTag.trim())) {
+                let color;
+                if (this.currentTags.length === 0) {
+                    color = this.tagClasses[0];
+                } else {
+                    const lastColor = this.currentTags[this.currentTags.length - 1].color;
+                    const lastColorIndex = this.tagClasses.indexOf(lastColor);
+                    color = this.tagClasses[(lastColorIndex + 1) % this.tagClasses.length];
+                }
+                const newTag = { text: this.newTag.trim(), color: color };
+                this.currentTags.push(newTag);
+                if (!this.allTags.some(tag => tag.text === newTag.text)) {
+                    this.allTags.push(newTag);
+                }
+                this.newTag = '';
+            }
+        },
+        addStoredTag(tag) {
+            if (!this.currentTags.some(currentTag => currentTag.text === tag.text)) {
+                this.currentTags.push({ text: tag.text, color: tag.color });
+            }
+        },
+        removeCurrentTag(index) {
+            this.currentTags.splice(index, 1);
+        },
+        checkDeleteLastTag(event) {
+            if (event.key === 'Backspace' && this.newTag === '') {
+                this.removeCurrentTag(this.currentTags.length - 1);
+            }
+        }
     },
     mounted() {
         document.addEventListener('click', this.handleClickOutside);
@@ -350,11 +402,33 @@ export default {
     transition: opacity 0.3s ease;
 }
 
-.fade-enter,
-.fade-leave-to
+.tag-close {
+    margin-left: 5px;
+    cursor: pointer;
+}
 
-/* .fade-leave-active in <2.1.8 */
-    {
-    opacity: 0;
+.tag-green {
+    background-color: #e0f7fa;
+    color: #00796b;
+}
+
+.tag-red {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.tag-blue {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.tag-brown {
+    background-color: #efebe9;
+    color: #5d4037;
+}
+
+.tag-grey {
+    background-color: #f5f5f5;
+    color: #616161;
 }
 </style>
