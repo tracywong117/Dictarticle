@@ -112,17 +112,17 @@
         p-4 m-0 hover:bg-gray-100 leading-normal text-[16px] placeholder-[#b1b1b1] bg-transparent cursor-pointer" />
             </div>
             <div class="w-1/2">
-                <div class="ml-2 flex flex-col" :class="[inputDropdownVisible ? 'border rounded' : '']">
-                    <div v-for="(tag, index) in currentTags" :key="index" :class="['tag', tag.color]"
-                        class="inline-flex items-center px-1 m-1">
+                <div class="ml-2 flex flex-wrap items-center" :class="[inputDropdownVisible ? 'border rounded' : '']">
+                    <span v-for="(tag, index) in currentTags" :key="index" :class="[tag.color]"
+                        class="items-center px-2 m-1 rounded-md text-[16px] ">
                         {{ tag.text }}
-                        <span @click="removeCurrentTag(index)" class="ml-[5px] cursor-pointer">x</span>
-                    </div>
+                        <span @click="removeCurrentTag(index)" class="ml-[5px] cursor-pointer text-gray-500">x</span>
+                    </span>
                     <input type="text" placeholder="Search for an option..." ref="another" @focus="toggleInputDropdown"
-                        class="h-6 w-full outline-none resize-none 
+                        class="flex-grow h-6 outline-none resize-none 
                             px-2 py-4 m-0 focus:bg-transparent leading-normal text-[16px] placeholder-[#b1b1b1] "
                         :class="[inputDropdownVisible
-                ? 'border-b bg-gray-100 focus:bg-gray-100'
+                ? 'bg-gray-100 focus:bg-gray-100'
                 : 'border-none rounded-sm bg-transparent hover:bg-gray-100']" v-model="newTag" @keydown.enter="addTag"
                         @keydown.backspace="checkDeleteLastTag" />
                     <div v-if="inputDropdownVisible"
@@ -132,19 +132,17 @@
                         </div>
                         <div v-if="newTag" class="hover:bg-slate-100 px-2 py-1 leading-[1.3] flex">
                             Create
-                            <div class="ml-1 px-2 rounded-sm bg-pink-100">
+                            <div class="ml-1 px-1 rounded-sm bg-pink-100">
                                 {{ newTag }}
                             </div>
                         </div>
                         <div v-else>
-                            <ul>
-                                <li v-for="(tag, index) in allTags" :key="index"
-                                    class="flex items-center p-2 mb-1 border rounded cursor-pointer" :class="tag.color"
-                                    @click="addStoredTag(tag)">
-                                    <span class="mr-2">::</span>
-                                    {{ tag.text }}
-                                </li>
-                            </ul>
+                            <div v-for="(tag, index) in allTags" :key="index"
+                                class="flex items-center px-2 mb-1 border rounded cursor-pointer"
+                                @click="addStoredTag(tag)">
+                                <span class="mr-2">::</span>
+                                <span class="px-2 m-1 rounded-md text-[16px]" :class="tag.color">{{ tag.text }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -409,26 +407,26 @@ export default {
 
 .tag-green {
     background-color: #e0f7fa;
-    color: #00796b;
+    /* color: #00796b; */
 }
 
 .tag-red {
     background-color: #ffebee;
-    color: #d32f2f;
+    /* color: #d32f2f; */
 }
 
 .tag-blue {
     background-color: #e3f2fd;
-    color: #1976d2;
+    /* color: #1976d2; */
 }
 
 .tag-brown {
     background-color: #efebe9;
-    color: #5d4037;
+    /* color: #5d4037; */
 }
 
 .tag-grey {
     background-color: #f5f5f5;
-    color: #616161;
+    /* color: #616161; */
 }
 </style>
