@@ -137,12 +137,10 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable'
-
 export default {
     name: 'ArticleProperty',
     components: {
-        draggable,
+        
     },
     data() {
         return {
