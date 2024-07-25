@@ -72,15 +72,15 @@ export default {
     ArticleProperty,
   },
   mounted() {
-    this.articleAnswer = {}
-    this.articleAnswer.createdAt = new Date();
-    this.articleAnswer.text = `\
-With blood on his face, he was then escorted from the stage by [Secret Service](秘勤局) agents, pausing to raise his fist in the air to chants of "USA! USA!" from the crowd.
+//     this.articleAnswer = {}
+//     this.articleAnswer.createdAt = new Date();
+//     this.articleAnswer.text = `\
+// With blood on his face, he was then escorted from the stage by [Secret Service](秘勤局) agents, pausing to raise his fist in the air to chants of "USA! USA!" from the crowd.
 
-It later emerged 20-year-old Pennsylvania man Thomas Matthew Crooks had fired several shots at Trump from a [rooftop](屋頂) outside the rally venue, before being shot dead by [police snipers](警察狙擊手).
+// It later emerged 20-year-old Pennsylvania man Thomas Matthew Crooks had fired several shots at Trump from a [rooftop](屋頂) outside the rally venue, before being shot dead by [police snipers](警察狙擊手).
 
-One [rallygoer](集會參與者) was killed and two others remain in a [critical condition](危險狀態). Trump's campaign says he is doing fine.\
-`
+// One [rallygoer](集會參與者) was killed and two others remain in a [critical condition](危險狀態). Trump's campaign says he is doing fine.\
+// `
   },
   computed: {
     parsedArticleAnswer() {
