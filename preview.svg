@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+  <style>
+    .background { fill: #FFFFFF; }
+    .highlighter { fill: #B19CD9; }
+    .sparkle { fill: #f2eba7; }
+  </style>
+  
+  <!-- Background -->
+  <rect class="background" width="24" height="24" rx="4" ry="4"/>
+  
+  <!-- Highlighter -->
+  <path class="highlighter" d="M13.67 7.29l5.4-7.29h-2.49l-5.83 7.87-.02.01v.02l.01.01c1.53 2.57 1.7 3.72.87 5.85l-.31.8.87.51-1.57 2.93h-10.6v6h16v-3h.26l1.48-2.69.83.48.51-.83c1.15-1.86 2.6-2.43 4.92-2.22v-2.49zm1.41 11.71h-2.74l1.57-2.93 2.11 1.23zm2.85-2.9l-4.17-2.43c.46-1.51.43-2.74.03-4l7.31 4.22c-1.26.35-2.29 1.06-3.17 2.21z"/>
+  
+  <!-- Sparkles -->
+  <path class="sparkle" d="M4 2l0.5 1.5L6 4l-1.5 0.5L4 6l-0.5-1.5L2 4l1.5-0.5z" />
+  <path class="sparkle" d="M20 5l0.5 1.5L22 7l-1.5 0.5L20 9l-0.5-1.5L18 7l1.5-0.5z" />
+  <path class="sparkle" d="M19 18l0.5 1.5L21 20l-1.5 0.5L19 22l-0.5-1.5L17 20l1.5-0.5z" />
+  <path class="sparkle" d="M3 15l0.5 1.5L5 17l-1.5 0.5L3 19l-0.5-1.5L1 17l1.5-0.5z" />
+  
+</svg>
