@@ -1,11 +1,7 @@
 <template>
-  <!-- <div class="custom-input-wrapper flex items-center p-[8px] rounded-[4px] bg-white border border-[#e1e1e1]">
-    <textarea v-model="content" placeholder="Title for this article"
-      class="custom-input h-6 w-full border-none outline-none resize-none p-0 m-0 bg-transparent leading-normal text-[16px] placeholder-[#b1b1b1]"></textarea>
-  </div> -->
   <input type="text" placeholder="Title for this article"
                 class="custom-input h-6 w-full border-none rounded-sm outline-none resize-none px-2 py-6 m-0 
-                hover:bg-gray-100 focus:bg-transparent 
+                hover:bg-gray-100 focus:bg-slate-100
                 leading-normal text-[32px] 
                 placeholder-[#b1b1b1] bg-transparent" />
 

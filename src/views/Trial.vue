@@ -1,107 +1,86 @@
 <template>
-    <div class="menu-container">
-        <custom-menu button-text="Left Menu" position="left">
-            <template #trigger>
-                <button class="bg-amber-100 hover:bg-amber-200">
-                    <span>Open Menu</span>
-                </button>
-            </template>
-            <div class="px-1">
-                <div class="dropdown-option">
-                    <img src="/icons/rename.svg" class="w-4 h-4 mr-2" alt="Rename" />
-                    Rename
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/setting-config.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Edit Property
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/trash.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Delete Property
-                </div>
-            </div>
-        </custom-menu>
+    <div class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">Todo List</h1>
+  
+      <!-- Add new task input -->
+      <div class="mb-4">
+        <input 
+          v-model="newTask" 
+          @keyup.enter="addTask"
+          class="border p-2 mr-2" 
+          placeholder="Enter a new task"
+        >
+        <button 
+          @click="addTask" 
+          class="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Add Task
+        </button>
+      </div>
+  
+      <!-- List of tasks -->
+      <ul class="space-y-2">
+        <li v-for="(task, index) in tasks" :key="index" class="flex items-center justify-between bg-gray-100 p-2 rounded">
+          <span>{{ task }}</span>
+          <button 
+            @click="confirmDelete(index)" 
+            class="bg-red-500 text-white px-2 py-1 rounded"
+          >
+            Delete
+          </button>
+        </li>
+      </ul>
+  
+      <!-- Delete Dialog component -->
+      <DeleteDialog 
+        :show="showDeleteDialog"
+        :message="deleteMessage"
+        @cancel="cancelDelete"
+        @confirm="confirmDeleteTask"
+      />
     </div>
-    <div class="menu-container">
-        <custom-menu button-text="Top Menu" position="top">
-
-            <div class="px-1">
-                <div class="dropdown-option">
-                    <img src="/icons/rename.svg" class="w-4 h-4 mr-2" alt="Rename" />
-                    Rename
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/setting-config.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Edit Property
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/trash.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Delete Property
-                </div>
-            </div>
-
-        </custom-menu>
-    </div>
-
-    <div class="menu-container">
-        <custom-menu button-text="Right Menu" position="right">
-            <div class="px-1">
-                <div class="dropdown-option">
-                    <img src="/icons/rename.svg" class="w-4 h-4 mr-2" alt="Rename" />
-                    Rename
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/setting-config.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Edit Property
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/trash.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Delete Property
-                </div>
-            </div>
-        </custom-menu>
-    </div>
-
-    <div class="menu-container">
-        <custom-menu button-text="Bottom Menu" position="bottom">
-            <div class="px-1">
-                <div class="dropdown-option">
-                    <img src="/icons/rename.svg" class="w-4 h-4 mr-2" alt="Rename" />
-                    Rename
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/setting-config.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Edit Property
-                </div>
-                <div class="dropdown-option">
-                    <img src="/icons/trash.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                    Delete Property
-                </div>
-            </div>
-        </custom-menu>
-    </div>
-
-</template>
-
-<script>
-import CustomMenu from '../components/CustomMenu.vue'
-
-export default {
-    name: 'App',
+  </template>
+  
+  <script>
+    import DeleteDialog from '@/components/DeleteDialog.vue';
+  
+  export default {
+    name: 'TodoList',
     components: {
-        CustomMenu
+      DeleteDialog
+    },
+    data() {
+      return {
+        tasks: ['Buy groceries', 'Walk the dog', 'Pay bills'],
+        newTask: '',
+        showDeleteDialog: false,
+        deleteMessage: '',
+        taskIndexToDelete: null
+      }
+    },
+    methods: {
+      addTask() {
+        if (this.newTask.trim()) {
+          this.tasks.push(this.newTask.trim());
+          this.newTask = '';
+        }
+      },
+      confirmDelete(index) {
+        this.taskIndexToDelete = index;
+        this.deleteMessage = `Are you sure you want to delete the task "${this.tasks[index]}"?`;
+        this.showDeleteDialog = true;
+      },
+      cancelDelete() {
+        this.showDeleteDialog = false;
+        this.taskIndexToDelete = null;
+      },
+      confirmDeleteTask() {
+        if (this.taskIndexToDelete !== null) {
+          this.tasks.splice(this.taskIndexToDelete, 1);
+          this.showDeleteDialog = false;
+          this.taskIndexToDelete = null;
+        }
+      }
     }
-}
-</script>
-
-<style>
-.menu-container {
-    margin-bottom: 100px;
-    display: flex;
-    justify-content: center;
-}
-
-.dropdown-option {
-    @apply hover:bg-slate-100 w-full p-2 my-1 flex items-center;
-}
-</style>
+  }
+  </script>

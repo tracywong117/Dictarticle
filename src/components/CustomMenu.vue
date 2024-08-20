@@ -35,15 +35,6 @@ export default {
         }
     },
     methods: {
-        //   toggleMenu() {
-        //     this.isOpen = !this.isOpen
-        //   },
-        //   handleClickOutside(event) {
-        //     if (this.$refs.menu && !this.$refs.menu.contains(event.target) && 
-        //         !this.$refs.triggerButton.contains(event.target)) {
-        //       this.isOpen = false
-        //     }
-        //   }
         toggleMenu() {
             this.isOpen = !this.isOpen
             if (this.isOpen) {
@@ -118,7 +109,6 @@ export default {
 }
 
 .menu-trigger {
-    display: inline-block;
     cursor: pointer;
 }
 </style>

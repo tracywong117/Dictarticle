@@ -12,6 +12,7 @@
         </div>
         <div>
           <ArticleProperty></ArticleProperty>
+          <AddPropertyBtn></AddPropertyBtn>
         </div>
       </div>
       <span v-for="(part, index) in parsedArticleAnswer" :key="index">
@@ -44,6 +45,7 @@ import MyTooltip from '../components/MyTooltip.vue';
 import { toRefs } from 'vue';
 import CustomInput from '../components/CustomInput.vue';
 import ArticleProperty from '../components/ArticleProperty.vue';
+import AddPropertyBtn from '@/components/AddPropertyBtn.vue';
 
 export default {
   name: 'Article',
@@ -70,8 +72,9 @@ export default {
     MyTooltip,
     CustomInput,
     ArticleProperty,
+    AddPropertyBtn,
   },
-  mounted() {
+//   mounted() {
 //     this.articleAnswer = {}
 //     this.articleAnswer.createdAt = new Date();
 //     this.articleAnswer.text = `\
@@ -81,7 +84,7 @@ export default {
 
 // One [rallygoer](集會參與者) was killed and two others remain in a [critical condition](危險狀態). Trump's campaign says he is doing fine.\
 // `
-  },
+//   },
   computed: {
     parsedArticleAnswer() {
       return this.parseArticleAnswer(this.articleAnswer.text);

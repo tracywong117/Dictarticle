@@ -72,14 +72,20 @@
                                 alt="Selected" />
                         </div>
                     </div>
-
                 </div>
             </CustomMenu>
             <div class="w-1/2">
-                <div class="ml-2 flex flex-wrap items-center"
+                <div v-if="property.type == 'Text'" class="ml-2 flex flex-wrap items-center">
+                    <input type="text"
+                        placeholder="Empty"
+                        class="flex-grow h-6 outline-none resize-none 
+                            px-2 py-4 m-0 focus:bg-slate-100 leading-normal text-[16px] placeholder-[#b1b1b1]"
+                        :class="[valueDropdownVisible ? 'visible' : 'hover:bg-gray-100']" />
+                </div>
+                <div v-else class="ml-2 flex flex-wrap items-center"
                     :class="[valueDropdownVisible ? 'border rounded' : 'hover:bg-gray-100']"
                     @click="toggleValueDropdown" ref="another">
-                    <span v-for="(tag, index) in currentTags" :key="index" :class="[tag.color]"
+                    <span v-for="(tag, index) in currentTags" :key="tag.id" :class="[tag.color]"
                         class="items-center tag-shape tag-text m-1">
                         {{ tag.text }}
                         <span v-if="valueDropdownVisible" @click="removeCurrentTag(index)"
@@ -93,23 +99,16 @@
                         <div class="py-1 px-2">
                             Select an option or create one
                         </div>
-                        <div v-if="newTag" class="hover:bg-slate-100 py-1 px-2 leading-normal flex">
+                        <!-- Show "Create [newTag]" if newTag doesn't match any existing tag -->
+                        <div v-if="newTag && !tagExists(newTag)"
+                            class="hover:bg-slate-100 py-1 px-2 leading-normal flex">
                             Create
                             <div class="ml-1 bg-pink-100 tag-shape tag-text" :class="chooseColor()">
                                 {{ newTag }}
                             </div>
                         </div>
-                        <div v-else>
-                            <!-- <div v-for="(tag, index) in allTags" :key="index"
-                                class="flex items-center px-2 mb-1 border rounded cursor-pointer hover:bg-slate-100 relative group">
-                                <span class="mr-2">::</span>
-                                <span class="m-1 tag-shape tag-text" :class="tag.color">
-                                    {{ tag.text }}
-                                </span>
-                                <img src="/icons/more-horizontal.svg" alt="Show More"
-                                    class="ml-auto w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                            </div> -->
-                            <div v-for="(tag, index) in allTags" :key="index" :class="[
+                        <div>
+                            <div v-for="(tag, index) in filteredTags" :key="index" :class="[
                                 'flex items-center px-2 mb-1 border rounded cursor-pointer relative group',
                                 draggedIndex === index ? 'bg-slate-100' : '',
                                 draggedIndex === null && hoveredIndex === index ? 'hover:bg-slate-100' : ''
@@ -120,48 +119,58 @@
                                 <span class="m-1 tag-shape tag-text" :class="tag.color">
                                     {{ tag.text }}
                                 </span>
-                                <CustomMenu position="right">
-                                    <template #trigger>
-                                        <img src="/icons/more-horizontal.svg" alt="Show More"
-                                            
-                                            class="ml-auto w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                            @click="toggleManageTagMenu(index)" />
-                                    </template>
-                                    <div class="z-[1000]">
-                                        <div class="px-1">
-                                            <div class="dropdown-option" @click="toggleBasicOption">
-                                                <img src="/icons/setting-config.svg" class="w-4 h-4 mr-2"
-                                                    alt="Change Type" />
-                                                Edit Tag
-                                            </div>
-                                            <div class="dropdown-option">
-                                                <img src="/icons/trash.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                                                Delete Tag
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CustomMenu>
 
-                                <!-- <div v-if="showManageTagMenu[index]" class="origin-top-left absolute mt-1 rounded border bg-white 
-                                    text-[14px] text-gray-600 w-[250px] font-sans leading-[1.4]">
-                                    <div>
-                                        <div class="px-1">
-                                            <div class="dropdown-option" @click="toggleBasicOption">
-                                                <img src="/icons/rename.svg" class="w-4 h-4 mr-2" alt="Rename" />
-                                                Rename
+                                <div class="ml-auto">
+                                    <CustomMenu position="right" @click.stop>
+                                        <template #trigger>
+                                            <img src="/icons/more-horizontal.svg" alt="Show More"
+                                                class="w-5 h-5 opacity-0 group-hover:opacity-100 bg-slate-200 rounded transition-opacity duration-200" />
+                                        </template>
+                                        <div class="z-[1000]">
+                                            <div class="px-2">
+                                                <div class="mt-3 mb-2 border rounded-sm ">
+                                                    <input type="text" class="h-6 w-full 
+                                                    bg-gray-100 placeholder-[#b1b1b1] 
+                                                        rounded-sm resize-none outline-none
+                                                        py-3 px-2 m-0 leading-normal text-[16px]
+                                    " onblur="this.parentElement.style.borderColor='#ccc';"
+                                                        onfocus="this.parentElement.style.borderColor='rgb(216, 180, 254)';"
+                                                        :value="tag.text" @input="editingText = $event.target.value"
+                                                        @focus="startEditingTag(index)" @blur="saveEditedTag"
+                                                        @keyup.enter="saveEditedTag" />
+                                                </div>
+                                                <div class="dropdown-option" @click.stop="deleteTag(tag)">
+                                                    <img src="/icons/trash.svg" class="w-4 h-4 mr-2"
+                                                        alt="Change Type" />
+                                                    Delete
+                                                </div>
                                             </div>
-                                            <div class="dropdown-option" @click="toggleBasicOption">
-                                                <img src="/icons/setting-config.svg" class="w-4 h-4 mr-2"
-                                                    alt="Change Type" />
-                                                Edit Property
+                                            <div class="border-t border-gray-200 my-2 pt-2 px-3 text-zinc-400">Colors
                                             </div>
-                                            <div class="dropdown-option">
-                                                <img src="/icons/trash.svg" class="w-4 h-4 mr-2" alt="Change Type" />
-                                                Delete Property
+                                            <div class="flex flex-wrap px-2 mb-2">
+                                                <div v-for="color in tagClasses" :key="color"
+                                                    class="flex items-center p-1 w-full hover:bg-slate-100"
+                                                    @click.stop="changeTagColor(tag, color)">
+                                                    <div class="m-1 w-4 h-4 border rounded"
+                                                        :class="color + ' ' + color + '-border'">
+                                                    </div>
+                                                    <div class="ml-2">
+                                                        {{ parseTagName(color) }}
+                                                    </div>
+                                                    <div v-if="tag.color === color" class="ml-auto">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="h-4 w-4 text-black" viewBox="0 0 20 20"
+                                                            fill="currentColor">
+                                                            <path fill-rule="evenodd"
+                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div> -->
+                                    </CustomMenu>
+                                </div>
                             </div>
 
                         </div>
@@ -176,6 +185,8 @@
 
 <script>
 import CustomMenu from './CustomMenu.vue';
+import { v4 as uuidv4 } from 'uuid'; // You'll need to install the uuid package
+
 export default {
     name: 'ArticleProperty',
     components: {
@@ -200,17 +211,21 @@ export default {
             },
             valueDropdownVisible: false,
             newTag: '',
-            currentTags: [], // needed by outside component
-            allTags: [], // needed by outside component
+            // currentTags: [], // needed by outside component 
+            currentTagIds: [], // needed by outside component // Will store only tag IDs
+            allTags: [], // needed by outside component // Will now store {id, text, color}
             tagClasses: ['tag-green', 'tag-red', 'tag-blue', 'tag-pink', 'tag-purple', 'tag-orange', 'tag-yellow', 'tag-grey'],
             draggedIndex: null,
             hoveredIndex: null,
             transparentImage: null, // Store the transparent image
             // showManageTagMenu: false,
             showManageTagMenu: {},
-
+            tempTagName: '', // the temporary tag name for renaming tag
+            editingTag: null,
+            editingText: '',
         };
-    }, created() {
+    },
+    created() {
         // Create a transparent image programmatically
         const canvas = document.createElement('canvas');
         canvas.width = 1;
@@ -219,6 +234,19 @@ export default {
         ctx.clearRect(0, 0, 1, 1);
         this.transparentImage = new Image();
         this.transparentImage.src = canvas.toDataURL();
+    },
+    computed: {
+        filteredTags() {
+            if (!this.newTag) {
+                return this.allTags;
+            }
+            return this.allTags.filter(tag =>
+                tag.text.toLowerCase().includes(this.newTag.toLowerCase())
+            );
+        },
+        currentTags() {
+            return this.currentTagIds.map(id => this.allTags.find(tag => tag.id === id)).filter(Boolean);
+        },
     },
     methods: {
         toggleBasicOption() {
@@ -248,6 +276,12 @@ export default {
             this.keyDropdownVisible = false;
             this.keyMenuShowBasic = true;
         },
+        //TODO: Implement property type change 
+        // implemented: multi-select
+        // TODO: select, text
+        // multi-select --> select: only show the first tag (currentTagIds will not change)
+        // multi-select --> text: tag1, tag2, tag3, ...
+        // text --> multi-select: split the value by comma and create tags
         handleTypeChange(type) {
             this.property.type = type;
             this.toggleEditOption();
@@ -270,30 +304,38 @@ export default {
             return color;
         },
         addTag() {
-            if (this.newTag.trim() !== '' && !this.currentTags.some(tag => tag.text === this.newTag.trim())) {
-                let color;
-                if (this.allTags.length === 0) {
-                    color = this.tagClasses[0];
+            if (this.newTag.trim() !== '') {
+                const trimmedTag = this.newTag.trim();
+                const existingTag = this.allTags.find(tag => tag.text === trimmedTag);
+
+                if (existingTag) {
+                    if (!this.currentTagIds.includes(existingTag.id)) {
+                        this.currentTagIds.push(existingTag.id);
+                    }
                 } else {
-                    const lastColor = this.allTags[this.allTags.length - 1].color;
-                    const lastColorIndex = this.tagClasses.indexOf(lastColor);
-                    color = this.tagClasses[(lastColorIndex + 1) % this.tagClasses.length];
-                }
-                const newTag = { text: this.newTag.trim(), color: color };
-                this.currentTags.push(newTag);
-                if (!this.allTags.some(tag => tag.text === newTag.text)) {
+                    let color;
+                    if (this.allTags.length === 0) {
+                        color = this.tagClasses[0];
+                    } else {
+                        const lastColor = this.allTags[this.allTags.length - 1].color;
+                        const lastColorIndex = this.tagClasses.indexOf(lastColor);
+                        color = this.tagClasses[(lastColorIndex + 1) % this.tagClasses.length];
+                    }
+                    const newTag = { id: uuidv4(), text: trimmedTag, color: color };
                     this.allTags.push(newTag);
+                    this.currentTagIds.push(newTag.id);
                 }
+
                 this.newTag = '';
             }
         },
         addStoredTag(tag) {
-            if (!this.currentTags.some(currentTag => currentTag.text === tag.text)) {
-                this.currentTags.push({ text: tag.text, color: tag.color });
+            if (!this.currentTagIds.includes(tag.id)) {
+                this.currentTagIds.push(tag.id);
             }
         },
         removeCurrentTag(index) {
-            this.currentTags.splice(index, 1);
+            this.currentTagIds.splice(index, 1);
         },
         checkDeleteLastTag(event) {
             if (event.key === 'Backspace' && this.newTag === '') {
@@ -340,10 +382,48 @@ export default {
                 this.hoveredIndex = null; // Unset hover state when not dragging
             }
         },
-        toggleManageTagMenu(index) {
-            console.log("toggleManageTagMenu", index);
-            // this.$set(this.showManageTagMenu, index, !this.showManageTagMenu[index])
-            this.showManageTagMenu = { ...this.showManageTagMenu, [index]: !this.showManageTagMenu[index] }
+        parseTagName(tag) {
+            // "tag-red" return "Red"
+            return tag.split('-')[1].charAt(0).toUpperCase() + tag.split('-')[1].slice(1);
+        },
+        // TODO: Fix the bug that after one key.enter, further editing text following by key.enter can not be saved
+        startEditingTag(index) {
+            this.editingTagIndex = index;
+            this.editingText = this.allTags[index].text;
+        },
+        saveEditedTag() {
+            if (this.editingText.trim() !== '' && this.editingTagIndex !== null) {
+                const newText = this.editingText.trim();
+                this.allTags[this.editingTagIndex].text = newText;
+                // No need to update currentTags separately
+
+                this.editingTagIndex = null;
+                this.editingText = '';
+            }
+        },
+        deleteTag(tag) {
+            const allTagsIndex = this.allTags.findIndex(t => t.id === tag.id);
+            if (allTagsIndex !== -1) {
+                this.allTags.splice(allTagsIndex, 1);
+            }
+
+            const currentTagsIndex = this.currentTagIds.indexOf(tag.id);
+            if (currentTagsIndex !== -1) {
+                this.currentTagIds.splice(currentTagsIndex, 1);
+            }
+        },
+        changeTagColor(tag, newColor) {
+            const allTagsIndex = this.allTags.findIndex(t => t.id === tag.id);
+            if (allTagsIndex !== -1) {
+                this.allTags[allTagsIndex].color = newColor;
+            }
+            // No need to update currentTags separately
+        },
+        tagExists(tagText) {
+            return this.allTags.some(tag => tag.text.toLowerCase() === tagText.toLowerCase());
+        },
+        tagsSimilar(tagText) {
+            return this.allTags.filter(tag => tag.text.toLowerCase().includes(tagText.toLowerCase()));
         },
     },
     mounted() {
@@ -400,6 +480,38 @@ export default {
 .tag-grey {
     background-color: #f5f5f5;
     /* color: #616161; */
+}
+
+.tag-green-border {
+    @apply border-green-200;
+}
+
+.tag-red-border {
+    @apply border-red-200;
+}
+
+.tag-blue-border {
+    @apply border-blue-200;
+}
+
+.tag-pink-border {
+    @apply border-pink-200;
+}
+
+.tag-purple-border {
+    @apply border-purple-200;
+}
+
+.tag-orange-border {
+    @apply border-orange-200;
+}
+
+.tag-yellow-border {
+    @apply border-yellow-200;
+}
+
+.tag-grey-border {
+    @apply border-gray-200;
 }
 
 .tag-text {
