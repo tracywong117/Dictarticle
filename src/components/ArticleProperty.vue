@@ -76,11 +76,14 @@
             </CustomMenu>
             <div class="w-1/2">
                 <div v-if="property.type == 'Text'" class="ml-2 flex flex-wrap items-center">
-                    <input type="text"
-                        placeholder="Empty"
-                        class="flex-grow h-6 outline-none resize-none 
-                            px-2 py-4 m-0 focus:bg-slate-100 leading-normal text-[16px] placeholder-[#b1b1b1]"
-                        :class="[valueDropdownVisible ? 'visible' : 'hover:bg-gray-100']" />
+                    <!-- <input type="text" v-model="textValue" placeholder="Empty" class="outline-none resize-none 
+                            px-2 py-1 m-0 focus:bg-slate-100 leading-normal text-[16px] placeholder-[#b1b1b1]"
+                        :class="[valueDropdownVisible ? 'visible' : 'hover:bg-gray-100']" /> -->
+                    <textarea rows="1" type="text" v-model="textValue" placeholder="Empty" class=" outline-none resize-none 
+                            px-2 py-1 m-0 focus:bg-slate-100 leading-normal text-[16px] placeholder-[#b1b1b1]"
+                        :class="[valueDropdownVisible ? 'visible' : 'hover:bg-gray-100']"
+                        @input="autoAdjustRows($event.target)" />
+
                 </div>
                 <div v-else class="ml-2 flex flex-wrap items-center"
                     :class="[valueDropdownVisible ? 'border rounded' : 'hover:bg-gray-100']"
@@ -91,8 +94,8 @@
                         <span v-if="valueDropdownVisible" @click="removeCurrentTag(index)"
                             class="ml-[5px] cursor-pointer tag-text">x</span>
                     </span>
-                    <input type="text" :placeholder="getValueInputPlaceholder()" class="flex-grow h-6 outline-none resize-none 
-                            px-2 py-4 m-0 focus:bg-transparent leading-normal text-[16px] placeholder-[#b1b1b1]"
+                    <input type="text" :placeholder="getValueInputPlaceholder()" class="outline-none resize-none 
+                            px-2 py-1 m-0 leading-normal text-[16px] placeholder-[#b1b1b1]"
                         :class="[valueDropdownVisible ? 'visible' : 'hover:bg-gray-100']" v-model="newTag"
                         @keydown.enter="addTag" @keydown.backspace="checkDeleteLastTag" />
                     <div v-if="valueDropdownVisible" class="p-2 w-full tag-text">
@@ -201,26 +204,22 @@ export default {
             property: {
                 'type': 'Text',
                 'name': 'Text',
-                'value': '',
                 'id': '',
-            }, // Property object; Needed by outside component
+            }, // needed by outside component
             keyTypeIcon: {
                 'Text': '/icons/text.svg',
                 'Multi-select': '/icons/multi-select.svg',
                 'Select': '/icons/select.svg',
             },
             valueDropdownVisible: false,
+            textValue: '', // needed by outside component
             newTag: '',
-            // currentTags: [], // needed by outside component 
             currentTagIds: [], // needed by outside component // Will store only tag IDs
             allTags: [], // needed by outside component // Will now store {id, text, color}
             tagClasses: ['tag-green', 'tag-red', 'tag-blue', 'tag-pink', 'tag-purple', 'tag-orange', 'tag-yellow', 'tag-grey'],
             draggedIndex: null,
             hoveredIndex: null,
             transparentImage: null, // Store the transparent image
-            // showManageTagMenu: false,
-            showManageTagMenu: {},
-            tempTagName: '', // the temporary tag name for renaming tag
             editingTag: null,
             editingText: '',
         };
@@ -236,6 +235,11 @@ export default {
         this.transparentImage.src = canvas.toDataURL();
     },
     computed: {
+        isMultiline() {
+            const textLength = this.textValue.length;
+            const threshold = 30; // adjust this value to your liking
+            return textLength > threshold;
+        },
         filteredTags() {
             if (!this.newTag) {
                 return this.allTags;
@@ -245,7 +249,11 @@ export default {
             );
         },
         currentTags() {
-            return this.currentTagIds.map(id => this.allTags.find(tag => tag.id === id)).filter(Boolean);
+            if (this.property.type === 'Multi-select') {
+                return this.currentTagIds.map(id => this.allTags.find(tag => tag.id === id)).filter(Boolean);
+            } else if (this.property.type === 'Select') {
+                return this.currentTagIds.map(id => this.allTags.find(tag => tag.id === id)).filter(Boolean).slice(0, 1); // Only show the first tag
+            }
         },
     },
     methods: {
@@ -276,12 +284,7 @@ export default {
             this.keyDropdownVisible = false;
             this.keyMenuShowBasic = true;
         },
-        //TODO: Implement property type change 
-        // implemented: multi-select
-        // TODO: select, text
-        // multi-select --> select: only show the first tag (currentTagIds will not change)
-        // multi-select --> text: tag1, tag2, tag3, ...
-        // text --> multi-select: split the value by comma and create tags
+        // DONE Implement property type change 
         handleTypeChange(type) {
             this.property.type = type;
             this.toggleEditOption();
@@ -330,8 +333,17 @@ export default {
             }
         },
         addStoredTag(tag) {
-            if (!this.currentTagIds.includes(tag.id)) {
-                this.currentTagIds.push(tag.id);
+            if (this.property.type === 'Multi-select') {
+                if (!this.currentTagIds.includes(tag.id)) {
+                    this.currentTagIds.push(tag.id); // Add the tag to the end
+                }
+            } else if (this.property.type === 'Select') {
+                if (this.currentTagIds.includes(tag.id)) {
+                    this.currentTagIds = this.currentTagIds.filter(id => id !== tag.id); // Add the tag to the first position while keeping the rest of the tags
+                    this.currentTagIds.unshift(tag.id);
+                } else {
+                    this.currentTagIds.unshift(tag.id); // Simply add the tag to the first position
+                }
             }
         },
         removeCurrentTag(index) {
@@ -425,6 +437,11 @@ export default {
         tagsSimilar(tagText) {
             return this.allTags.filter(tag => tag.text.toLowerCase().includes(tagText.toLowerCase()));
         },
+        autoAdjustRows(textarea) {
+            const text = textarea.value;
+            const rows = text.split('\n').length;
+            textarea.rows = rows;
+        }
     },
     mounted() {
         document.addEventListener('click', this.handleClickOutside);
