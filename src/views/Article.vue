@@ -11,8 +11,29 @@
           </div>
         </div>
         <div>
-          <ArticleProperty></ArticleProperty>
-          <AddPropertyBtn></AddPropertyBtn>
+          <!-- <div v-for="(property, index) in propertiesData" :key="index" class="relative">
+            <ArticleProperty v-model:textValue="property.textValue" v-model:currentTagIds="property.currentTagIds"
+              v-model:allTags="property.allTags" v-model:property="property.property"
+              @delete-property="handleDeleteProperty(index)" />
+          </div> -->
+
+          <!-- <div v-for="(property, index) in allProperty" :key="index" draggable="true"
+            @dragstart="onDragStart(index, $event)" @dragend="onDragEnd" @dragover.prevent="onDragOver(index)"
+            @mouseover="onMouseOver(index)" @mouseleave="onMouseLeave(index)">
+            <ArticleProperty v-model:textValue="property.textValue" v-model:currentTagIds="property.currentTagIds"
+              v-model:allTags="property.allTags" v-model:property="property.property"
+              @delete-property="handleDeleteProperty(index)" />
+          </div> -->
+          <div v-for="(propertyId, index) in allPropertyIds" :key="propertyId">
+            <ArticleProperty :property="propertiesData[index].property"
+              v-model:textValue="propertiesData[index].textValue"
+              v-model:currentTagIds="propertiesData[index].currentTagIds"
+              v-model:allTags="propertiesData[index].allTags" @deleteProperty="handleDeleteProperty(index)"
+              @dragstart="onDragStart(index, $event)" @dragover="onDragOver(index)" @dragend="onDragEnd"
+              @mouseover="onMouseOver(index)" @mouseleave="onMouseLeave(index)" />
+          </div>
+
+          <AddPropertyBtn @add-property="handleAddProperty"></AddPropertyBtn>
         </div>
       </div>
       <span v-for="(part, index) in parsedArticleAnswer" :key="index">
@@ -39,13 +60,15 @@
 </template>
 
 <script>
-import { useArticleStore } from '../stores/article.js';
+import { useArticleStore } from '@/stores/article.js';
 import { ElPopover } from 'element-plus';
-import MyTooltip from '../components/MyTooltip.vue';
+import MyTooltip from '@/components/MyTooltip.vue';
 import { toRefs } from 'vue';
-import CustomInput from '../components/CustomInput.vue';
-import ArticleProperty from '../components/ArticleProperty.vue';
+import CustomInput from '@/components/CustomInput.vue';
+import ArticleProperty from '@/components/ArticleProperty.vue';
 import AddPropertyBtn from '@/components/AddPropertyBtn.vue';
+
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   name: 'Article',
@@ -65,6 +88,21 @@ export default {
         { name: 'Wikipedia', icon: '/icons/wikipedia-icon.png' },
         { name: 'Cambridge', icon: '/icons/cambridge-icon.png' },
       ],
+      propertiesData: [
+        {
+          textValue: '',
+          currentTagIds: [],
+          allTags: [],
+          property: {
+            type: 'Text',
+            name: 'Demo',
+            id: '', // uuidv4(),
+          },
+        },
+      ],
+      allPropertyIds: [], // Store all property ids 
+      draggedIndex: null,
+      transparentImage: null,
     }
   },
   components: {
@@ -74,17 +112,30 @@ export default {
     ArticleProperty,
     AddPropertyBtn,
   },
-//   mounted() {
-//     this.articleAnswer = {}
-//     this.articleAnswer.createdAt = new Date();
-//     this.articleAnswer.text = `\
-// With blood on his face, he was then escorted from the stage by [Secret Service](秘勤局) agents, pausing to raise his fist in the air to chants of "USA! USA!" from the crowd.
+  mounted() {
+    //     this.articleAnswer = {}
+    //     this.articleAnswer.createdAt = new Date();
+    //     this.articleAnswer.text = `\
+    // With blood on his face, he was then escorted from the stage by [Secret Service](秘勤局) agents, pausing to raise his fist in the air to chants of "USA! USA!" from the crowd.
 
-// It later emerged 20-year-old Pennsylvania man Thomas Matthew Crooks had fired several shots at Trump from a [rooftop](屋頂) outside the rally venue, before being shot dead by [police snipers](警察狙擊手).
+    // It later emerged 20-year-old Pennsylvania man Thomas Matthew Crooks had fired several shots at Trump from a [rooftop](屋頂) outside the rally venue, before being shot dead by [police snipers](警察狙擊手).
 
-// One [rallygoer](集會參與者) was killed and two others remain in a [critical condition](危險狀態). Trump's campaign says he is doing fine.\
-// `
-//   },
+    // One [rallygoer](集會參與者) was killed and two others remain in a [critical condition](危險狀態). Trump's campaign says he is doing fine.\
+    // `
+    const initialPropertyId = uuidv4();
+    this.propertiesData[0].property.id = initialPropertyId;
+    this.allPropertyIds.push(initialPropertyId);
+  },
+  created() {
+    // Create a transparent image programmatically
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 1, 1);
+    this.transparentImage = new Image();
+    this.transparentImage.src = canvas.toDataURL();
+  },
   computed: {
     parsedArticleAnswer() {
       return this.parseArticleAnswer(this.articleAnswer.text);
@@ -112,7 +163,7 @@ export default {
       const formattedTime = timeFormatter.format(date);
 
       return `${formattedDate} ${formattedTime}`;
-    }
+    },
   },
   methods: {
     parseArticleAnswer(text) {
@@ -159,6 +210,85 @@ export default {
           break;
       }
       window.open(url, '_blank');
+    },
+    // handleAddProperty() {
+    //   this.propertiesData.push({
+    //     textValue: '',
+    //     currentTagIds: [],
+    //     allTags: [],
+    //     property: {
+    //       type: 'Text',
+    //       name: 'New Property',
+    //       id: uuidv4(),
+    //     },
+    //   });
+    // },
+    handleAddProperty() {
+      const newPropertyId = uuidv4();
+      this.propertiesData.push({
+        textValue: '',
+        currentTagIds: [],
+        allTags: [],
+        property: {
+          type: 'Text',
+          name: 'New Property',
+          id: newPropertyId,
+        },
+      });
+      this.allPropertyIds.push(newPropertyId);
+    },
+    // handleDeleteProperty(index) {
+    //   console.log('delete property', index);
+    //   console.log(this.propertiesData[index]);
+    //   this.propertiesData.splice(index, 1);
+    //   console.log(this.propertiesData);
+    // },
+    handleDeleteProperty(index) {
+      console.log('delete property', index);
+      console.log(this.propertiesData[index]);
+      this.propertiesData.splice(index, 1);
+      this.allPropertyIds.splice(index, 1);
+      console.log(this.propertiesData);
+    },
+    onDragStart(index, event) {
+      // console.log('drag start', index);
+      this.draggedIndex = index;
+      event.dataTransfer.effectAllowed = 'move';
+      if (this.transparentImage) {
+        event.dataTransfer.setDragImage(this.transparentImage, 0, 0);
+      }
+    },
+    onDragOver(targetIndex) {
+      // console.log('drag over', targetIndex);
+      if (this.draggedIndex !== null && this.draggedIndex !== targetIndex) {
+        const draggedPropertyId = this.allPropertyIds[this.draggedIndex];
+        this.allPropertyIds.splice(this.draggedIndex, 1);
+        this.allPropertyIds.splice(targetIndex, 0, draggedPropertyId);
+
+        const draggedItem = this.propertiesData[this.draggedIndex];
+        this.propertiesData.splice(this.draggedIndex, 1);
+        this.propertiesData.splice(targetIndex, 0, draggedItem);
+
+        // console.log(this.allPropertyIds);
+        // console.log(this.propertiesData);
+        this.draggedIndex = targetIndex;
+      }
+    },
+    onDragEnd() {
+      // console.log('drag end');
+      this.draggedIndex = null;
+    },
+    onMouseOver(propertyId) {
+      // console.log('mouse over', propertyId);
+      if (this.draggedIndex === null) {
+        this.hoveredPropertyId = propertyId;
+      }
+    },
+    onMouseLeave(propertyId) {
+      // console.log('mouse leave', propertyId);
+      if (this.hoveredPropertyId === propertyId && this.draggedIndex === null) {
+        this.hoveredPropertyId = null;
+      }
     },
   },
 };

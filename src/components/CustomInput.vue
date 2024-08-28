@@ -1,6 +1,6 @@
 <template>
   <input type="text" placeholder="Title for this article"
-                class="custom-input h-6 w-full border-none rounded-sm outline-none resize-none px-2 py-6 m-0 
+                class="custom-input h-6 w-full border-none outline-none resize-none px-2 py-6 m-0 
                 hover:bg-gray-100 focus:bg-slate-100
                 leading-normal text-[32px] 
                 placeholder-[#b1b1b1] bg-transparent" />

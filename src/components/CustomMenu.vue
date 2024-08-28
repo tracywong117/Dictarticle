@@ -72,6 +72,7 @@ export default {
     width: 250px;
     font-family: sans-serif;
     line-height: 1.4;
+    z-index: 99;
 }
 
 .menu-top {
