@@ -1,16 +1,18 @@
 <template>
-    <div ref="dropdown">
+    <div  ref="dropdown">
         <div class="flex my-2 w-full items-baseline font-sans group/propertyKey">
             <CustomMenu @menu-closed="resetShowOption">
                 <template #trigger>
                     <div class="relative flex items-center">
-                        <img src="/icons/drag-vertical.svg" class="w-[20px] h-[25px] absolute left-[-20px] cursor-pointer
+                        <!-- <img src="/icons/drag-vertical.svg" class="w-[20px] h-[25px] absolute left-[-20px] cursor-pointer
                         hover:bg-gray-100 py-1 rounded
-                        opacity-0
-                        group-hover/propertyKey:opacity-100" />
-                        <img :src="keyTypeIcon[localProperty.type]" class="absolute left-2 w-4 h-4" />
+                        opacity-100
+                        group-hover/propertyKey:opacity-100" /> -->
+                        <img src="/icons/drag-vertical.svg" class="w-[20px] h-[25px] absolute left-[-20px] cursor-pointer
+                        hover:bg-gray-100 py-1 rounded">
+                        <img :src="keyTypeIcon[localProperty.type]" class="nonDraggable absolute left-2 w-4 h-4" />
                         <input type="text" :value="localProperty.name" readonly
-                            class="pl-8 h-6 w-40 border-none outline-none resize-none 
+                            class="nonDraggable pl-8 h-6 w-40 border-none outline-none resize-none 
                 p-4 m-0 hover:bg-gray-100 leading-normal text-[16px] text-gray-600 placeholder-[#b1b1b1] bg-transparent cursor-pointer" />
                     </div>
                 </template>

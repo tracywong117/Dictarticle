@@ -24,14 +24,22 @@
               v-model:allTags="property.allTags" v-model:property="property.property"
               @delete-property="handleDeleteProperty(index)" />
           </div> -->
-          <div v-for="(propertyId, index) in allPropertyIds" :key="propertyId">
+          <!-- <div v-for="(propertyId, index) in allPropertyIds" :key="propertyId">
             <ArticleProperty :property="propertiesData[index].property"
               v-model:textValue="propertiesData[index].textValue"
               v-model:currentTagIds="propertiesData[index].currentTagIds"
               v-model:allTags="propertiesData[index].allTags" @deleteProperty="handleDeleteProperty(index)"
               @dragstart="onDragStart(index, $event)" @dragover="onDragOver(index)" @dragend="onDragEnd"
               @mouseover="onMouseOver(index)" @mouseleave="onMouseLeave(index)" />
-          </div>
+          </div> -->
+          <Container orientation="vertical" @drop="onDrop" lock-axis="y" nonDragAreaSelector=".nonDraggable" rag-class="form-ghost"
+          drop-class="form-ghost-drop" :class="{ isActive: true }">
+            <Draggable v-for="(property, index) in propertiesData" :key="property.property.id">
+              <ArticleProperty v-model:textValue="property.textValue" v-model:currentTagIds="property.currentTagIds"
+                v-model:allTags="property.allTags" v-model:property="property.property"
+                @delete-property="handleDeleteProperty(index)" />
+            </Draggable>
+          </Container>
 
           <AddPropertyBtn @add-property="handleAddProperty"></AddPropertyBtn>
         </div>
@@ -67,6 +75,8 @@ import { toRefs } from 'vue';
 import CustomInput from '@/components/CustomInput.vue';
 import ArticleProperty from '@/components/ArticleProperty.vue';
 import AddPropertyBtn from '@/components/AddPropertyBtn.vue';
+
+import { Container, Draggable } from "vue3-smooth-dnd";
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -111,11 +121,13 @@ export default {
     CustomInput,
     ArticleProperty,
     AddPropertyBtn,
+    Container,
+    Draggable
   },
   mounted() {
-    //     this.articleAnswer = {}
-    //     this.articleAnswer.createdAt = new Date();
-    //     this.articleAnswer.text = `\
+    // this.articleAnswer = {}
+    // this.articleAnswer.createdAt = new Date();
+    // this.articleAnswer.text = `\
     // With blood on his face, he was then escorted from the stage by [Secret Service](秘勤局) agents, pausing to raise his fist in the air to chants of "USA! USA!" from the crowd.
 
     // It later emerged 20-year-old Pennsylvania man Thomas Matthew Crooks had fired several shots at Trump from a [rooftop](屋頂) outside the rally venue, before being shot dead by [police snipers](警察狙擊手).
@@ -230,7 +242,7 @@ export default {
         currentTagIds: [],
         allTags: [],
         property: {
-          type: 'Text',
+          type: 'Multi-select',
           name: 'New Property',
           id: newPropertyId,
         },
@@ -250,45 +262,63 @@ export default {
       this.allPropertyIds.splice(index, 1);
       console.log(this.propertiesData);
     },
-    onDragStart(index, event) {
-      // console.log('drag start', index);
-      this.draggedIndex = index;
-      event.dataTransfer.effectAllowed = 'move';
-      if (this.transparentImage) {
-        event.dataTransfer.setDragImage(this.transparentImage, 0, 0);
-      }
-    },
-    onDragOver(targetIndex) {
-      // console.log('drag over', targetIndex);
-      if (this.draggedIndex !== null && this.draggedIndex !== targetIndex) {
-        const draggedPropertyId = this.allPropertyIds[this.draggedIndex];
-        this.allPropertyIds.splice(this.draggedIndex, 1);
-        this.allPropertyIds.splice(targetIndex, 0, draggedPropertyId);
+    // onDragStart(index, event) {
+    //   // console.log('drag start', index);
+    //   this.draggedIndex = index;
+    //   event.dataTransfer.effectAllowed = 'move';
+    //   if (this.transparentImage) {
+    //     event.dataTransfer.setDragImage(this.transparentImage, 0, 0);
+    //   }
+    // },
+    // onDragOver(targetIndex) {
+    //   // console.log('drag over', targetIndex);
+    //   if (this.draggedIndex !== null && this.draggedIndex !== targetIndex) {
+    //     const draggedPropertyId = this.allPropertyIds[this.draggedIndex];
+    //     this.allPropertyIds.splice(this.draggedIndex, 1);
+    //     this.allPropertyIds.splice(targetIndex, 0, draggedPropertyId);
 
-        const draggedItem = this.propertiesData[this.draggedIndex];
-        this.propertiesData.splice(this.draggedIndex, 1);
-        this.propertiesData.splice(targetIndex, 0, draggedItem);
+    //     const draggedItem = this.propertiesData[this.draggedIndex];
+    //     this.propertiesData.splice(this.draggedIndex, 1);
+    //     this.propertiesData.splice(targetIndex, 0, draggedItem);
 
-        // console.log(this.allPropertyIds);
-        // console.log(this.propertiesData);
-        this.draggedIndex = targetIndex;
-      }
+    //     // console.log(this.allPropertyIds);
+    //     // console.log(this.propertiesData);
+    //     this.draggedIndex = targetIndex;
+    //   }
+    // },
+    // onDragEnd() {
+    //   // console.log('drag end');
+    //   this.draggedIndex = null;
+    // },
+    // onMouseOver(propertyId) {
+    //   // console.log('mouse over', propertyId);
+    //   if (this.draggedIndex === null) {
+    //     this.hoveredPropertyId = propertyId;
+    //   }
+    // },
+    // onMouseLeave(propertyId) {
+    //   // console.log('mouse leave', propertyId);
+    //   if (this.hoveredPropertyId === propertyId && this.draggedIndex === null) {
+    //     this.hoveredPropertyId = null;
+    //   }
+    // },
+    onDrop(dropResult) {
+      this.propertiesData = this.applyDrag(this.propertiesData, dropResult);
     },
-    onDragEnd() {
-      // console.log('drag end');
-      this.draggedIndex = null;
-    },
-    onMouseOver(propertyId) {
-      // console.log('mouse over', propertyId);
-      if (this.draggedIndex === null) {
-        this.hoveredPropertyId = propertyId;
+    applyDrag(arr, dragResult) {
+      const { removedIndex, addedIndex, payload } = dragResult;
+
+      if (removedIndex === null && addedIndex === null) return arr;
+      const result = [...arr];
+      let itemToAdd = payload;
+
+      if (removedIndex !== null) {
+        itemToAdd = result.splice(removedIndex, 1)[0];
       }
-    },
-    onMouseLeave(propertyId) {
-      // console.log('mouse leave', propertyId);
-      if (this.hoveredPropertyId === propertyId && this.draggedIndex === null) {
-        this.hoveredPropertyId = null;
+      if (addedIndex !== null) {
+        result.splice(addedIndex, 0, itemToAdd);
       }
+      return result;
     },
   },
 };
